@@ -83,6 +83,8 @@ done
 ### Android build section
 #####
 
+export NDK_TOOLCHAIN=$ROOT/toolchain
+
 if [ -z "$NDK_TOOLCHAIN" ]; then
   echo "NDK_TOOLCHAIN is not defined. Android builds was skipped"
   exit

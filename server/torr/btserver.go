@@ -1,10 +1,12 @@
 package torr
 
 import (
+	"fmt"
 	"log"
+	"math/rand"
 	"net"
-	"strconv"
 	"sync"
+	"time"
 
 	"github.com/anacrolix/torrent"
 	"github.com/anacrolix/torrent/metainfo"
@@ -96,20 +98,26 @@ func (bt *BTServer) configure() {
 		log.Println("Set listen port", settings.BTsets.PeersListenPort)
 		bt.config.ListenPort = settings.BTsets.PeersListenPort
 	} else {
-		upnpport := 32000
 		for {
-			log.Println("Check upnp port", upnpport)
-			l, err := net.Listen("tcp", ":"+strconv.Itoa(upnpport))
-			if l != nil {
-				l.Close()
-			}
+			m := 0
+			a := 1024
+			b := 32786
+			rand.Seed(time.Now().UnixNano())
+			n := a + rand.Intn(b-a+1)
+			port := fmt.Sprintf(":%d", n)
+			l, err := net.Listen("tcp", port)
+			defer l.Close()
 			if err == nil {
+				bt.config.ListenPort = n
+				log.Println("Open peers listen port:", n)
+				m = 1
+			} else {
+				log.Println("Error:", err)
+			}
+			if m == 1 {
 				break
 			}
-			upnpport++
 		}
-		log.Println("Set upnp port", upnpport)
-		bt.config.ListenPort = upnpport
 	}
 
 	log.Println("Client config:", settings.BTsets)

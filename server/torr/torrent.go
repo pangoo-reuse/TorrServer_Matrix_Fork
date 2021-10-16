@@ -192,8 +192,8 @@ func (t *Torrent) updateRA() {
 		switch {
 		case adj < pieceLen:
 			adj = pieceLen
-		case adj > pieceLen*4:
-			adj = pieceLen * 4
+		case adj > 4*16*1024*1024:
+			adj = 4*16*1024*1024
 		}
 		go t.cache.AdjustRA(adj)
 	}

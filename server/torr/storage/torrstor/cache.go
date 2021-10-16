@@ -128,6 +128,7 @@ func (c *Cache) AdjustRA(readahead int64) {
 		c.muReaders.Lock()
 		for r, _ := range c.readers {
 			r.SetReadahead(readahead)
+			r.SetResponsive()
 		}
 		c.muReaders.Unlock()
 	}
